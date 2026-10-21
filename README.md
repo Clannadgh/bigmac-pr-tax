@@ -4,6 +4,8 @@
 
 一个 GitHub Action。零 npm 依赖，一行 workflow 接入，PR 合并即开票。
 
+> **一次 412 行的合并 = 3 只巨无霸 = ¥90.00**（门店实时价，含一份薯条）。不是为了惩罚，是为了让"这次改动有多大"有个刻度。
+
 [![CI](https://github.com/Clannadgh/bigmac-pr-tax/actions/workflows/ci.yml/badge.svg)](https://github.com/Clannadgh/bigmac-pr-tax/actions/workflows/ci.yml)
 ![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 ![dependencies](https://img.shields.io/badge/dependencies-0-success)
