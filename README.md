@@ -16,6 +16,14 @@
 
 <sub>↑ 这不是设计稿：税单由 Actions 自动开在 PR 评论区，金额来自麦当劳 MCP 的 `calculate-price`（单位分）。图为周五夜间场景（合并时间固定以便复现）。<a href="https://github.com/Clannadgh/bigmac-pr-tax/pull/1#issuecomment-6305859242">看真实 PR 里的评论 →</a></sub>
 
+<details><summary>再看一个场景：周日凌晨的线上救火（×1.5 ＋ 1 杯麦咖啡美式）</summary>
+
+![周末加班场景](assets/comment-weekend.png)
+
+<sub>96 增 / 31 删 / 4 个文件 → 基础合并税 1 只 × 1.5 = 1.5 → 四舍五入 **2 只**，另附美式 1 杯，实付 ¥62.90（`calculate-price` 实时核价）。<br>深夜周边门店全打烊时还有一级兜底：自动切到人民广场 24 小时门店继续实时核价，票面标 `夜间兜底`。</sub>
+
+</details>
+
 <details><summary>展开纯文本版（可直接复制粘贴）</summary>
 
 ```
