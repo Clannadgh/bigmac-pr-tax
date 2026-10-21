@@ -1,0 +1,32 @@
+{
+  "_comment": "离线快照：任何 MCP 调用失败时的最后兜底。价格来自麦当劳官方 MCP 实时菜单（query-meals），单位：分。",
+  "generatedAt": "2026-10-21T09:15:00+08:00",
+  "generatedBy": "query-meals (storeCode=1450713, orderType=1, beType=1, reservationDate=2026-10-21 11:30)",
+  "source": "mcd-mcp https://mcp.mcd.cn",
+  "storeCode": "1450713",
+  "storeName": "麦当劳上海黄浦华旭国际大厦餐厅",
+  "storeAddress": "南京东路街道西藏中路336号",
+  "currency": "CNY",
+  "unit": "fen",
+  "items": {
+    "1100": {
+      "name": "巨无霸",
+      "currentPrice": 25.5,
+      "originalPrice": 25.5,
+      "priceFen": 2550
+    },
+    "4810": {
+      "name": "薯条",
+      "currentPrice": 13.5,
+      "originalPrice": 13.5,
+      "priceFen": 1350
+    },
+    "507411": {
+      "name": "麦咖啡美式",
+      "currentPrice": 11.9,
+      "originalPrice": 19,
+      "priceFen": 1190
+    }
+  },
+  "note": "菜单标价与算价结果口径不同：美式菜单标价 11.9 元，但 calculate-price 按原价 19 元起算并给 7.1 元优惠。快照只有菜单价，故不含这项优惠——小票会标注「离线快照模式」。"
+}

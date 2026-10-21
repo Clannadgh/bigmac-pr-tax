@@ -1,0 +1,60 @@
+name: '麦门 PR 税 BigMac PR Tax'
+description: '团队里谁合并了 PR，机器人就在评论区给他开一张巨无霸税单：按代码量定税，用麦当劳官方 MCP 实时核价，附 ASCII 小票与当日优惠券。'
+author: 'bigmac-pr-tax'
+branding:
+  icon: 'shopping-bag'
+  color: 'red'
+
+inputs:
+  github-token:
+    description: '用于读取 PR 并写入评论的 Token，需要 pull-requests: write 权限。'
+    required: false
+    default: ${{ github.token }}
+  mcd-mcp-token:
+    description: '麦当劳 MCP Token（https://mcp.mcd.cn）。不填则自动降级为内置价格快照，仍可正常开票。'
+    required: false
+    default: ''
+  mcd-city:
+    description: '核价门店所在城市（旧名 city 仍兼容）。'
+    required: false
+    default: '上海'
+  mcd-keyword:
+    description: '核价门店关键词，商圈/路名均可，会在该城市内就近选店（旧名 keyword 仍兼容）。'
+    required: false
+    default: '人民广场'
+  store-code:
+    description: '强制指定门店编号（留空则按 city + keyword 自动选店）。'
+    required: false
+    default: ''
+  max-burgers:
+    description: '破产保护上限（只）。《麦门税法》默认 12，防止超大 PR 把同事吃破产。'
+    required: false
+    default: '12'
+  max-stores:
+    description: '当就近门店买不到巨无霸时，最多再试几家门店（按距离升序）。指定 store-code 时不生效。'
+    required: false
+    default: '3'
+  utc-offset:
+    description: '判定「周五夜间 / 周末」用的时区偏移（小时），默认 8 即 UTC+8。'
+    required: false
+    default: '8'
+  project-url:
+    description: '本项目主页地址，用于税单底部的安装引导与 Star 链接。留空则只给出 workflow 模板。'
+    required: false
+    default: ''
+  comment:
+    description: '是否把税单写进 PR 评论（false 时只在日志输出）。'
+    required: false
+    default: 'true'
+  dry-run:
+    description: '只在日志里打印税单，不写评论。'
+    required: false
+    default: 'false'
+  pr-number:
+    description: '手动指定 PR 编号（workflow_dispatch 调试用）。'
+    required: false
+    default: ''
+
+runs:
+  using: 'node20'
+  main: 'src/action.js'

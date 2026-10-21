@@ -1,0 +1,35 @@
+name: 麦门 PR 税（本仓库自测）
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: '要开票的 PR 编号'
+        required: true
+      dry-run:
+        description: '只在日志打印，不写评论'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  tax:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 本仓库自测走本地路径；外部同学请改成 uses: <owner>/bigmac-pr-tax@v1
+      - uses: ./
+        with:
+          mcd-mcp-token: ${{ secrets.MCD_MCP_TOKEN }}
+          mcd-city: 上海
+          mcd-keyword: 人民广场
+          max-burgers: '20'
+          pr-number: ${{ inputs.pr-number }}
+          dry-run: ${{ inputs.dry-run }}

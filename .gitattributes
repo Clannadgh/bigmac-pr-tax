@@ -1,0 +1,5 @@
+# 统一用 LF，避免 Windows 提交把 CRLF 带进仓库
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary

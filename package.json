@@ -1,0 +1,24 @@
+{
+  "name": "bigmac-pr-tax",
+  "version": "1.0.0",
+  "private": true,
+  "description": "麦门 PR 税：PR 合并后在评论区开一张巨无霸税单，价格由麦当劳官方 MCP 实时核价",
+  "main": "src/action.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "demo": "node scripts/demo.js",
+    "demo:offline": "node scripts/demo.js --offline"
+  },
+  "keywords": [
+    "github-action",
+    "mcp",
+    "mcdonalds",
+    "developer-experience",
+    "ascii-art"
+  ],
+  "license": "MIT",
+  "dependencies": {}
+}
