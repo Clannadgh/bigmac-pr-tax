@@ -23,4 +23,4 @@ jobs:
           mcd-city: 上海
           mcd-keyword: 人民广场
           # store-code: '1450713'
-          max-burgers: '20'
+          max-burgers: '12'

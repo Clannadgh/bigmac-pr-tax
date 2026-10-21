@@ -30,6 +30,6 @@ jobs:
           mcd-mcp-token: ${{ secrets.MCD_MCP_TOKEN }}
           mcd-city: 上海
           mcd-keyword: 人民广场
-          max-burgers: '20'
+          max-burgers: '12'
           pr-number: ${{ inputs.pr-number }}
           dry-run: ${{ inputs.dry-run }}
