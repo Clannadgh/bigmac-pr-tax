@@ -347,6 +347,15 @@ bigmac-pr-tax/
 - 不用模板引擎渲染小票：小票的难点不是模板，是**中英文混排的列宽**。一个 `displayWidth()` 比一个依赖更有价值。
 - 不在 Action 里 checkout 代码：所有计税数据都来自 GitHub REST API，省 5 秒、也避免碰用户源码。
 
+## 延伸阅读
+
+- [`docs/tax-rules.md`](docs/tax-rules.md) —— 《麦门税法》全文、计算顺序与四个算例
+- [`docs/design-notes.md`](docs/design-notes.md) —— 为什么这样设计：触发点、计税结构、回退表、排版、时区、测试策略
+- [`docs/mcp-session.md`](docs/mcp-session.md) —— 一次可对账的真实 MCP 会话（6 次调用 + traceId）
+- [`CHANGELOG.md`](CHANGELOG.md) —— 版本记录与已知局限
+
+---
+
 ## 合规与免责
 
 - 本项目**非麦当劳官方产品**，是麦当劳程序员节创意开发大赛的参赛作品。
