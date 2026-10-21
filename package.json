@@ -10,7 +10,9 @@
   "scripts": {
     "test": "node --test",
     "demo": "node scripts/demo.js",
-    "demo:offline": "node scripts/demo.js --offline"
+    "demo:offline": "node scripts/demo.js --offline",
+    "cli": "node scripts/tax-cli.js",
+    "trace": "node scripts/trace-mcp.js"
   },
   "keywords": [
     "github-action",

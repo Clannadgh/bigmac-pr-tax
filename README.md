@@ -4,6 +4,18 @@
 
 一个 GitHub Action。零 npm 依赖，一行 workflow 接入，PR 合并即开票。
 
+[![CI](https://github.com/Clannadgh/bigmac-pr-tax/actions/workflows/ci.yml/badge.svg)](https://github.com/Clannadgh/bigmac-pr-tax/actions/workflows/ci.yml)
+![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![dependencies](https://img.shields.io/badge/dependencies-0-success)
+![tests](https://img.shields.io/badge/tests-81%20passed-success)
+![license](https://img.shields.io/badge/license-MIT-blue)
+
+![真实运行：PR 评论区自动开出的小票](assets/comment-friday.png)
+
+<sub>↑ 这不是设计稿：税单由 Actions 自动开在 PR 评论区，金额来自麦当劳 MCP 的 `calculate-price`（单位分）。图为周五夜间场景（合并时间固定以便复现）。<a href="https://github.com/Clannadgh/bigmac-pr-tax/pull/1#issuecomment-6305859242">看真实 PR 里的评论 →</a></sub>
+
+<details><summary>展开纯文本版（可直接复制粘贴）</summary>
+
 ```
 ================================================
                麦  门  税  务  局
@@ -43,6 +55,8 @@
               BMT-20261016-A1B2C3
 ================================================
 ```
+
+</details>
 
 完整版见 [`docs/sample-receipt.txt`](docs/sample-receipt.txt)（由 `node scripts/demo.js` 真实生成，价格来自麦当劳 MCP 实时核价），
 调用明细见 [`docs/mcp-session.md`](docs/mcp-session.md)（6 次调用、带 traceId、可逐条对账）。
@@ -87,6 +101,17 @@
 | **零依赖 / 可降级** | 只用 Node 18+ 原生 `fetch`、`node:fs`、`node:path`、`node:test`。`package.json` 里没有 `dependencies`。没有 Token 或 MCP 挂了，仍能开出一张标注清楚的税单。 |
 
 再加一条隐性的：**不真实下单、不真实支付**。这个项目只调用查询与算价接口，永远不会调用 `create-order`。
+
+---
+
+## 两种用法
+
+| 用法 | 触发 | 适合 |
+| --- | --- | --- |
+| **GitHub Action** | PR 合并时自动开票（本文主线） | 想让团队每个 PR 都被盖个章 |
+| **CLI / Agent Skill** | `node scripts/tax-cli.js --stdin` | 想手动算一次、或让 AI 助手代你开票（见 [`SKILL.md`](SKILL.md)） |
+
+两种用法共用同一套计税与核价代码，输出完全一致。
 
 ---
 
@@ -300,15 +325,16 @@ node src/action.js
 ## 测试
 
 ```bash
-node --test          # 78 个用例，零依赖
+node --test          # 81 个用例，零依赖
 ```
 
 `tax.test.js`（26 个）逐条锁死《麦门税法》：每个税目的正例 + 边界反例、上限/下限、M1 与 M2 互斥、时区偏移、四舍五入（4.5 → 5）、输出结构契约。
 
-其余 52 个分别覆盖：
+其余 55 个分别覆盖：
 - `assess.test.js`（13）：打烊空菜单逐家试、早餐改预约、配菜只跳该项、深夜 24h 兜底（afterHours）、菜单标价兜底、快照兜底、指定门店不换店、券失败不阻断、**只调 4 个只读工具**；
 - `mcp.test.js`（16）：mock fetch 锁协议——`2025-03-26` + `notifications/initialized`（202 空 body 不算错）、`structuredContent.data` 优先于文本干扰项、SSE 帧、业务失败抛带 code 的错、401 不重试；以及券的「结构化优先 / Markdown 兜底 / 都不行就不编造」；
 - `receipt.test.js`（11）：CJK 2 列宽对齐、标点不落行首、数字串不断行、小票每行不超宽、`×2 ＋1 薯条` 文案、缺货标注、触顶保护；
+- `cli.test.js`（3）：`gh pr view` / REST 下划线字段 / 非法数字的归一化；
 - `comment.test.js`（12）：marker 首行、标题与 @作者、税项三列表格、ASCII 小票围栏成对、📍 门店说明、🌙 深夜兜底、快照不伪装实时、前 5 张券、纳税须知恰好 3 条且第 3 条引导 Star。
 
 ---
@@ -317,24 +343,25 @@ node --test          # 78 个用例，零依赖
 
 ```
 bigmac-pr-tax/
-├── action.yml               # Action 元数据与输入定义
+├── action.yml               # GitHub Action 定义
+├── SKILL.md                 # Agent Skill 入口（CLI 用法 + 规则速查 + 硬约束）
 ├── src/
-│   ├── action.js            # 入口：取 PR 数据 → 计税 → assess() → 开票
+│   ├── action.js            # Action 入口：取 PR 数据 → 计税 → assess() → 开票
 │   ├── tax.js               # 《麦门税法》计税内核（T1-T3 加性 / M1-M3 乘性 / 破产保护）
 │   ├── assess.js            # 主流程：找店 → 试菜单 → 整篮核价 → 深夜兜底 → 快照
-│   ├── mcp-data.js          # 数据层四个只读函数（stores / meals / price / coupons）
-│   ├── mcp.js               # Streamable HTTP 客户端（2025-03-26 + notifications + structuredContent）
-│   ├── receipt.js           # ASCII 小票渲染（CJK 宽度对齐、避头点换行）
+│   ├── mcp-data.js          # 数据层四个只读函数
+│   ├── mcp.js               # Streamable HTTP 客户端（2025-03-26 + structuredContent）
+│   ├── receipt.js           # ASCII 小票渲染（CJK 2 列宽对齐、避头点）
 │   └── github.js            # PR 数据读取 + 评论写入
-├── data/
-│   └── menu-snapshot.json   # 离线快照（含 generatedAt 时间戳）
+├── data/menu-snapshot.json  # 离线快照（含 generatedAt）
 ├── scripts/
-│   ├── demo.js              # 本地演示：出一张真税单（--case / --offline）
-│   └── trace-mcp.js         # 真实 MCP 调用记录器（逐条打印 traceId，可对账）
-├── docs/
-│   ├── sample-receipt.txt   # 真实生成的完整小票
-│   └── mcp-session.md       # 一次完整 MCP 会话（6 次调用 + traceId + 耗时）
-├── test/*.test.js           # node --test（78 个用例）
+│   ├── tax-cli.js           # 命令行入口（--stdin / --format receipt|comment|json）
+│   ├── demo.js              # 四个场景的本地演示
+│   └── trace-mcp.js         # 真实调用记录器（traceId 可对账）
+├── assets/                  # 真实评论截图（README 首屏用）
+├── docs/                    # 税法全文 / 设计笔记 / MCP 会话记录 / 小票样例
+├── test/*.test.js           # node --test（81 个用例）
+├── mcp-config.example.json  # MCP 连接配置模板（Token 用占位符）
 ├── MCP_INTEGRATION.md       # MCP 使用说明（参赛必需）
 └── CONTEST_DECLARATION.md   # 参赛声明（参赛必需，官方原文）
 ```
@@ -352,7 +379,9 @@ bigmac-pr-tax/
 - [`docs/tax-rules.md`](docs/tax-rules.md) —— 《麦门税法》全文、计算顺序与四个算例
 - [`docs/design-notes.md`](docs/design-notes.md) —— 为什么这样设计：触发点、计税结构、回退表、排版、时区、测试策略
 - [`docs/mcp-session.md`](docs/mcp-session.md) —— 一次可对账的真实 MCP 会话（6 次调用 + traceId）
+- [`SKILL.md`](SKILL.md) —— 装成 Agent Skill：CLI 用法、规则速查、硬约束
 - [`CHANGELOG.md`](CHANGELOG.md) —— 版本记录与已知局限
+- [`assets/comment-real.png`](assets/comment-real.png) —— 真实 PR #1 的评论截图（周三白天场景）
 
 ---
 

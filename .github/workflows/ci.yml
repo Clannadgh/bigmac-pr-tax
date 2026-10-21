@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      # 零依赖：没有 npm install，直接跑 Node 自带测试运行器
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: 单元测试（税法 / 协议 / 核价 / 排版 / 评论）
+        run: npm test
+
+      - name: 离线出票冒烟（不连 MCP，验证快照链路）
+        run: node scripts/tax-cli.js --additions 180 --deletions 320 --files 12 --format receipt --offline
+
+      - name: 校验快照文件格式
+        run: node -e "const s=require('./data/menu-snapshot.json'); if(!s.generatedAt||!s.items['1100']) throw new Error('快照缺字段'); console.log('快照生成于', s.generatedAt)"

@@ -1,0 +1,12 @@
+{
+  "_comment": "把 YOUR_MCP_TOKEN 换成你在 https://mcp.mcd.cn 控制台拿到的 Token。不要把这个文件改成真实值后提交。",
+  "mcpServers": {
+    "mcd-mcp": {
+      "type": "streamablehttp",
+      "url": "https://mcp.mcd.cn",
+      "headers": {
+        "Authorization": "Bearer YOUR_MCP_TOKEN"
+      }
+    }
+  }
+}
